@@ -4,12 +4,11 @@ import {
   SignalBase,
   StateSignal,
   abortSignal,
-  setTimeout as _setTimeout,
   setInterval as _setInterval,
 } from "./signals.ts";
 import views from "views-bundle";
 import { count, pagedFetch, invalidate, sameRefs } from "./reactive-store.ts";
-import { SkewedDate, getClockSkew } from "./skewed-date.ts";
+import { getClockSkew } from "./skewed-date.ts";
 import Expression from "../lib/common/expression.ts";
 import * as taskQueue from "./task-queue.ts";
 import * as notifications from "./notifications.ts";
@@ -31,7 +30,7 @@ export class ViewNode {
   children: ViewElement[];
   constructor(
     name: string,
-    attributes: Record<string, any>,
+    attributes: Record<string, any> | null,
     children: ViewElement[],
   ) {
     this.name = name;
@@ -310,13 +309,7 @@ function initView(context: RenderContext, node: ViewElement): ViewElement {
     const context2 = context.popView(node.name);
     const signalizedNode = signalizeNode(node);
     return new ComputedSignal<ViewElement>(() => {
-      const res = script(
-        signalizedNode,
-        _setTimeout as any,
-        _setInterval as any,
-        SkewedDate as unknown as DateConstructorLike,
-      );
-
+      const res = script(signalizedNode);
       return initView(context2, res);
     });
   }
@@ -335,16 +328,7 @@ function initView(context: RenderContext, node: ViewElement): ViewElement {
   return new ViewNode(node.name, node.attributes, children);
 }
 
-type SetTimeout = typeof setTimeout;
-
-type DateConstructorLike = typeof globalThis.Date;
-
-type ViewFunc = (
-  node: SignalizedViewNode,
-  setTimeout: SetTimeout,
-  setInterval: SetTimeout,
-  Date: DateConstructorLike,
-) => ViewElement;
+type ViewFunc = (node: SignalizedViewNode) => ViewElement;
 
 // Immutable: every derived context is constructed with its own (shallow-
 // copied) stacks map. The stack arrays are shared between contexts until

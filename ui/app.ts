@@ -28,6 +28,7 @@ import { div } from "./dom.ts";
 
 export { ViewNode } from "./views.ts";
 export { Signal } from "./signals.ts";
+export { viewGlobals } from "./view-globals.ts";
 
 declare global {
   interface Window {
