@@ -150,6 +150,34 @@ void test("validator: rejects import.meta with location", async () => {
   );
 });
 
+void test("validator: rejects async arrow functions with location", async () => {
+  const err = await validateViewScript(
+    "v",
+    `const f = async () => 1; return f;`,
+  );
+  assert.match(
+    err ?? "",
+    /^async functions are not allowed in view scripts at v:\d+:\d+$/,
+  );
+});
+
+void test("validator: rejects async function declarations", async () => {
+  const err = await validateViewScript(
+    "v",
+    `async function f(){ await f(); } return f;`,
+  );
+  // The async function is the earliest rejected node (await is nested inside it).
+  assert.match(err ?? "", /not allowed in view scripts at v:\d+:\d+$/);
+});
+
+void test("validator: accepts ordinary (non-async) functions", async () => {
+  const err = await validateViewScript(
+    "v",
+    `function f(){ return 1; } return f();`,
+  );
+  assert.strictEqual(err, null);
+});
+
 void test("validator: accepts new.target (not import.meta)", async () => {
   const err = await validateViewScript(
     "v",

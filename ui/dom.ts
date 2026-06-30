@@ -32,7 +32,6 @@ interface BaseAttrs {
   style?:
     | Reactive<string>
     | Partial<Record<keyof CSSStyleDeclaration, Reactive<string>>>;
-  ref?: (el: Element) => void;
   onMount?: (el: Element) => void | (() => void);
   [key: string]: unknown;
 }
@@ -521,11 +520,11 @@ export function createElement<T extends Element>(
     for (const [key, value] of Object.entries(attrs)) {
       if (value === undefined) continue;
 
-      // Skip special handlers. "onRemove" is not part of BaseAttrs (use the
-      // each() option instead), but stays skipped defensively: a stray
-      // function-valued onRemove would otherwise match the "on" prefix below
-      // and register a bogus "remove" event listener.
-      if (key === "ref" || key === "onMount" || key === "onRemove") continue;
+      // Skip special handlers. "onMount" is handled below; "onRemove" is not
+      // part of BaseAttrs (use the each() option instead). Both stay skipped so
+      // a stray function-valued attribute is ignored rather than matching the
+      // "on" prefix below and registering a bogus event listener.
+      if (key === "onMount" || key === "onRemove") continue;
 
       // Event handlers
       if (key.startsWith("on") && typeof value === "function") {
@@ -575,11 +574,6 @@ export function createElement<T extends Element>(
 
   // Store disposables
   (element as ElementWithDisposables).__disposables = disposables;
-
-  // Handle ref
-  if (attrs?.ref && typeof attrs.ref === "function") {
-    (attrs.ref as (e: Element) => void)(element);
-  }
 
   // Handle onMount
   if (attrs?.onMount && typeof attrs.onMount === "function") {

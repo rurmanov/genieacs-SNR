@@ -79,8 +79,19 @@ async function compileView(id: string, script: string): Promise<string> {
     throw formatError(text, id, m.line, m.column);
   }
 
-  // Reject import.meta and dynamic import(), reporting the earliest occurrence.
+  // Reject import.meta, dynamic import(), and async/await, reporting the earliest
+  // occurrence. async/await is forbidden because the cleanup owner is only
+  // re-established for the synchronous extent of a handler/timer callback; a
+  // microtask continuation after `await` runs with no owner, stranding any
+  // listener/timer/signal it spawns (see ui/view-membrane.ts).
   const rejections: { text: string; node: acorn.Node }[] = [];
+  const rejectAsync = (node: acorn.Node): void => {
+    if ((node as { async?: boolean }).async)
+      rejections.push({
+        text: "async functions are not allowed in view scripts",
+        node,
+      });
+  };
   walk.simple(ast, {
     ImportExpression(node) {
       rejections.push({
@@ -97,6 +108,14 @@ async function compileView(id: string, script: string): Promise<string> {
         text: "import.meta is not allowed in view scripts",
         node,
       });
+    },
+    FunctionDeclaration: rejectAsync,
+    FunctionExpression: rejectAsync,
+    ArrowFunctionExpression: rejectAsync,
+    AwaitExpression(node) {
+      // Top-level await is already a syntax error (the wrapper is non-async);
+      // this catches `await` inside a script-defined async function.
+      rejections.push({ text: "await is not allowed in view scripts", node });
     },
   });
   if (rejections.length) {
