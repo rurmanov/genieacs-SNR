@@ -9,7 +9,6 @@
 const device = node.attributes.device.get();
 const deviceId = device["DeviceID.ID"];
 const taskCmd = new Signal.State(null);
-const deviceFaults = new Signal.State(null);
 const delCmd = new Signal.State(null);
 const delStatus = new Signal.State(null);
 
@@ -102,69 +101,6 @@ const [onlineStatus, statusColor] =
       ? ["Past 24 Hours", "#a1d99b"]
       : ["Others", "#e5f5e0"];
 
-const faultsTable = new Signal.Computed(() => {
-  const faults = deviceFaults.get();
-  if (!faults?.length)
-    return (
-      <tr>
-        <td
-          class="bg-stripes text-sm font-medium text-center text-stone-500 p-4"
-          colspan="7"
-        >
-          No faults
-        </td>
-      </tr>
-    );
-  return faults.map((f) => {
-    const yamlOut = new Signal.State("");
-    return (
-      <tr key={f._id}>
-        <td class="whitespace-nowrap pl-6 pr-3 py-4 text-sm text-stone-900">
-          {f.channel}
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-stone-900">
-          {f.code}
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-stone-900">
-          <span
-            class="inline-block truncate decoration-dotted max-w-xs"
-            onmouseover={(e) => {
-              e.target.title = f.message;
-            }}
-          >
-            {f.message}
-          </span>
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-stone-900">
-          <do-yaml-stringify arg={f.detail} res={yamlOut} />
-          <span
-            class="inline-block truncate decoration-dotted max-w-xs cursor-pointer hover:underline"
-            onmouseover={(e) => {
-              e.target.title = e.target.textContent;
-            }}
-          >
-            {yamlOut}
-          </span>
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-stone-900">
-          {f.retries}
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-stone-900">
-          {new Date(f.timestamp).toLocaleString()}
-        </td>
-        <td class="whitespace-nowrap px-3 py-4 text-sm text-stone-900">
-          <button
-            class="text-cyan-700 hover:text-cyan-900 font-medium"
-            onclick={() => delCmd.set({ resource: "faults", id: f._id })}
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    );
-  });
-});
-
 // @ts-expect-error: top-level return (script is wrapped in a function at runtime)
 return (
   <>
@@ -217,44 +153,8 @@ return (
           <param label={c.label} param={c.param} />
         ))}
       </instance-table>
-      <do-fetch
-        arg={{
-          resource: "faults",
-          filter: `_id > '${deviceId}:' AND _id < '${deviceId}:\xff'`,
-        }}
-        res={deviceFaults}
-      />
       <h2>Faults</h2>
-      <div class="shadow overflow-hidden rounded-lg w-max">
-        <table class="divide-y divide-stone-200">
-          <thead class="bg-stone-50">
-            <tr>
-              <th class="py-3.5 text-left text-sm font-semibold text-stone-500 pl-6 pr-3">
-                Channel
-              </th>
-              <th class="py-3.5 text-left text-sm font-semibold text-stone-500 px-3">
-                Code
-              </th>
-              <th class="py-3.5 text-left text-sm font-semibold text-stone-500 px-3">
-                Message
-              </th>
-              <th class="py-3.5 text-left text-sm font-semibold text-stone-500 px-3">
-                Detail
-              </th>
-              <th class="py-3.5 text-left text-sm font-semibold text-stone-500 px-3">
-                Retries
-              </th>
-              <th class="py-3.5 text-left text-sm font-semibold text-stone-500 px-3">
-                Timestamp
-              </th>
-              <th class="py-3.5 text-left text-sm font-semibold text-stone-500 px-3"></th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-stone-200 bg-white">
-            {faultsTable}
-          </tbody>
-        </table>
-      </div>
+      <faults-table device={device} />
       <h2>Data model</h2>
       <datamodel-explorer device={device} />
       <div class="space-x-3 mt-4">
@@ -278,8 +178,10 @@ return (
             label: "Delete",
             title: "Delete device",
             action: () => {
-              if (confirm(`Delete device ${deviceId}?`))
+              if (confirm(`Delete device ${deviceId}?`)) {
+                delStatus.set(null);
                 delCmd.set({ resource: "devices", id: deviceId });
+              }
             },
           },
         ].map(({ label, title, task: t, action }) => (

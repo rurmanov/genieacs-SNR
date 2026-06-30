@@ -19,6 +19,8 @@ import PIE_CHART from "../seed/pie-chart.jsx" with { type: "text" };
 import DEVICE_PAGE from "../seed/device-page.jsx" with { type: "text" };
 import DEVICE_PAGE_TR098 from "../seed/device-page-tr098.jsx" with { type: "text" };
 import DEVICE_PAGE_TR181 from "../seed/device-page-tr181.jsx" with { type: "text" };
+import FAULTS_TABLE from "../seed/faults-table.jsx" with { type: "text" };
+import OVERLAY_DIALOG from "../seed/overlay-dialog.jsx" with { type: "text" };
 import PARAMETER from "../seed/parameter.jsx" with { type: "text" };
 import SUMMON_BUTTON from "../seed/summon-button.jsx" with { type: "text" };
 import ICON from "../seed/icon.jsx" with { type: "text" };
@@ -142,6 +144,8 @@ export async function seed(options: Record<string, boolean>): Promise<void> {
       { _id: "device-page", script: DEVICE_PAGE },
       { _id: "device-page-tr098", script: DEVICE_PAGE_TR098 },
       { _id: "device-page-tr181", script: DEVICE_PAGE_TR181 },
+      { _id: "faults-table", script: FAULTS_TABLE },
+      { _id: "overlay-dialog", script: OVERLAY_DIALOG },
       { _id: "parameter", script: PARAMETER },
       { _id: "summon-button", script: SUMMON_BUTTON },
       { _id: "icon", script: ICON },
