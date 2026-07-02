@@ -260,6 +260,12 @@ export class StateSignal<T> extends SignalBase<T> {
     markSinksDirty(this._sinks);
   }
 
+  // Atomic read-modify-write with an untracked read (direct field access)
+  update(fn: (prev: T) => T): void {
+    if (this._disposed) throw new Error("Cannot write to disposed signal");
+    this.set(fn(this._value));
+  }
+
   [Symbol.dispose](): void {
     if (this._disposed) return;
     this._disposed = true;

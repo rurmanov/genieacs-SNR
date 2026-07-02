@@ -84,6 +84,58 @@ void test("StateSignal.set() with same value (Object.is) doesn't trigger updates
   assert.strictEqual(nanComputeCount, 1);
 });
 
+void test("StateSignal.update applies fn to current value and notifies", () => {
+  const signal = new StateSignal(1);
+  let computeCount = 0;
+  const computed = new ComputedSignal(() => {
+    computeCount++;
+    return signal.get() * 2;
+  });
+  assert.strictEqual(computed.get(), 2);
+
+  signal.update((v) => v + 1);
+  assert.strictEqual(signal.get(), 2);
+  assert.strictEqual(computed.get(), 4);
+  assert.strictEqual(computeCount, 2);
+
+  // Goes through set(): an equal result is a no-op for dependents
+  signal.update((v) => v);
+  assert.strictEqual(computed.get(), 4);
+  assert.strictEqual(computeCount, 2);
+});
+
+void test("StateSignal.update inside a computed registers no dependency", () => {
+  // update() is a command, not a subscription: an effect that appends to a
+  // list must not re-run (and re-append) when the list later changes.
+  const list = new StateSignal<number[]>([]);
+  let runs = 0;
+  const effect = new ComputedSignal(() => {
+    runs++;
+    list.update((prev) => [...prev, runs]);
+    return null;
+  });
+
+  effect.get();
+  assert.strictEqual(runs, 1);
+  assert.deepStrictEqual(list.get(), [1]);
+
+  // An external write to the list must not dirty the effect computed
+  list.set([]);
+  effect.get();
+  assert.strictEqual(runs, 1);
+});
+
+void test("StateSignal.update throws on disposed signal", () => {
+  const signal = new StateSignal(1);
+  signal[Symbol.dispose]();
+  assert.throws(
+    () => {
+      signal.update((v) => v + 1);
+    },
+    { message: "Cannot write to disposed signal" },
+  );
+});
+
 void test("Can subclass StateSignal", () => {
   class Counter extends StateSignal<number> {
     increment(): void {
