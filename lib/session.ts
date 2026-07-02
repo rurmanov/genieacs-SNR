@@ -3252,7 +3252,7 @@ export async function rpcResponse(
         sessionContext.deviceData,
         `Downloads.${rpcReq.instance}.LastFileName`,
         timestamp + 1,
-        { value: [timestamp + 1, [rpcReq.fileType, "xsd:string"]] },
+        { value: [timestamp + 1, [rpcReq.fileName ?? "", "xsd:string"]] },
         toClear,
       );
 
@@ -3260,7 +3260,7 @@ export async function rpcResponse(
         sessionContext.deviceData,
         `Downloads.${rpcReq.instance}.LastTargetFileName`,
         timestamp + 1,
-        { value: [timestamp + 1, [rpcReq.fileType, "xsd:string"]] },
+        { value: [timestamp + 1, [rpcReq.targetFileName ?? "", "xsd:string"]] },
         toClear,
       );
 

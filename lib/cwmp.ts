@@ -853,7 +853,8 @@ async function sendAcsRequest(
       }
 
       const fileName = acsRequest.fileName ?? "";
-      acsRequest.url = prefix + encodeURI(fileName);
+      acsRequest.url =
+        prefix + fileName.split("/").map(encodeURIComponent).join("/");
 
       const files = localCache.getFiles(sessionContext.cacheSnapshot);
       if (files[fileName]) acsRequest.fileSize = files[fileName].length;

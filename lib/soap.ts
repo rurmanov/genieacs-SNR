@@ -503,9 +503,11 @@ function FactoryResetResponse(): FactoryResetResponse {
 function Download(methodRequest: Download): string {
   return `<cwmp:Download><CommandKey>${
     methodRequest.commandKey || ""
-  }</CommandKey><FileType>${methodRequest.fileType}</FileType><URL>${
-    methodRequest.url
-  }</URL><Username>${encodeEntities(
+  }</CommandKey><FileType>${encodeEntities(
+    methodRequest.fileType || "",
+  )}</FileType><URL>${encodeEntities(
+    methodRequest.url || "",
+  )}</URL><Username>${encodeEntities(
     methodRequest.username || "",
   )}</Username><Password>${encodeEntities(
     methodRequest.password || "",
