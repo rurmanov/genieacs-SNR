@@ -6,8 +6,8 @@
 // Attributes:
 //   device - Device object from the parent router
 
-const device = node.attributes.device.get();
-const deviceId = device["DeviceID.ID"];
+const device = node.attributes.device;
+const deviceId = new Signal.Computed(() => device.get()?.["DeviceID.ID"]);
 const taskCmd = new Signal.State(null);
 const delCmd = new Signal.State(null);
 const delStatus = new Signal.State(null);
@@ -28,8 +28,11 @@ const pingDisplay = new Signal.Computed(() => {
   return "Unreachable";
 });
 
-const connectionUrl = device["Device.ManagementServer.ConnectionRequestURL"];
-const hostIp = connectionUrl ? new URL(connectionUrl).hostname : null;
+const hostIp = new Signal.Computed(() => {
+  const connectionUrl =
+    device.get()?.["Device.ManagementServer.ConnectionRequestURL"];
+  return connectionUrl ? new URL(connectionUrl).hostname : null;
+});
 
 // Device parameters to display
 const parameters = [
@@ -76,30 +79,38 @@ const summonParams = [
   ...hostsColumns.map((c) => `${hostsRoot}.*.${c.param}`),
 ];
 
-const parameterRows = parameters
-  .filter(({ param }) => device[param])
-  .map(({ label, param }) => (
-    <tr class="border-b border-stone-200">
-      <th class="text-sm font-medium text-stone-500 text-left px-6 py-3">
-        {label}
-      </th>
-      <td class="text-sm text-stone-900 px-6 py-3">
-        <parameter device={device} param={param} />
-      </td>
-    </tr>
-  ));
+const parameterRows = new Signal.Computed(() => {
+  const dev = device.get() ?? {};
+  return parameters
+    .filter(({ param }) => dev[param])
+    .map(({ label, param }) => (
+      <tr class="border-b border-stone-200">
+        <th class="text-sm font-medium text-stone-500 text-left px-6 py-3">
+          {label}
+        </th>
+        <td class="text-sm text-stone-900 px-6 py-3">
+          <parameter device={device} param={param} />
+        </td>
+      </tr>
+    ));
+});
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
-const informTime = device["Events.Inform"];
-const now = Date.now();
-const [onlineStatus, statusColor] =
-  informTime > now - FIVE_MINUTES
-    ? ["Online", "#31a354"]
-    : informTime > now - FIVE_MINUTES - ONE_DAY
-      ? ["Past 24 Hours", "#a1d99b"]
-      : ["Others", "#e5f5e0"];
+const onlineStatus = new Signal.Computed(() => {
+  const informTime = device.get()?.["Events.Inform"];
+  const now = Date.now();
+  if (informTime > now - FIVE_MINUTES) return "Online";
+  if (informTime > now - FIVE_MINUTES - ONE_DAY) return "Past 24 Hours";
+  return "Others";
+});
+
+const statusColor = new Signal.Computed(
+  () =>
+    ({ Online: "#31a354", "Past 24 Hours": "#a1d99b" })[onlineStatus.get()] ??
+    "#e5f5e0",
+);
 
 // @ts-expect-error: top-level return (script is wrapped in a function at runtime)
 return (
@@ -162,31 +173,35 @@ return (
           {
             label: "Reboot",
             title: "Reboot device",
-            task: { name: "reboot", device: deviceId },
+            action: () =>
+              taskCmd.set({ name: "reboot", device: deviceId.get() }),
           },
           {
             label: "Reset",
             title: "Factory reset device",
-            task: { name: "factoryReset", device: deviceId },
+            action: () =>
+              taskCmd.set({ name: "factoryReset", device: deviceId.get() }),
           },
           {
             label: "Push file",
             title: "Push a firmware or config file",
-            task: { name: "download", devices: [deviceId] },
+            action: () =>
+              taskCmd.set({ name: "download", devices: [deviceId.get()] }),
           },
           {
             label: "Delete",
             title: "Delete device",
             action: () => {
-              if (confirm(`Delete device ${deviceId}?`)) {
+              const id = deviceId.get();
+              if (confirm(`Delete device ${id}?`)) {
                 delStatus.set(null);
-                delCmd.set({ resource: "devices", id: deviceId });
+                delCmd.set({ resource: "devices", id });
               }
             },
           },
-        ].map(({ label, title, task: t, action }) => (
+        ].map(({ label, title, action }) => (
           <button
-            onclick={() => (action ? action() : taskCmd.set(t))}
+            onclick={action}
             title={title}
             class="px-4 py-2 border border-stone-300 shadow-sm text-sm font-medium rounded-md text-stone-700 bg-white hover:bg-stone-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
