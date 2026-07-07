@@ -151,6 +151,11 @@ export interface SessionContext {
   operationsTouched: { [commandKey: string]: 1 | 0 };
   provisionsRet: any[];
   doneTasks: string[];
+  uploadTaskArgs?: {
+    url?: string;
+    username?: string;
+    password?: string;
+  };
 }
 
 export interface Task {
@@ -162,6 +167,9 @@ export interface Task {
   fileType?: string;
   fileName?: string;
   targetFileName?: string;
+  url?: string;
+  username?: string;
+  password?: string;
   expiry?: number;
   provisions?: [string, ...Value[]][];
 }

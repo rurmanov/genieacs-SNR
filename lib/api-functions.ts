@@ -353,6 +353,15 @@ function sanitizeTask(task: any): void {
 
       if (typeof task.fileName !== "string" || !task.fileName.length)
         throw new Error("Missing 'fileName' property");
+
+      if (task.url != null && typeof task.url !== "string")
+        throw new Error("Invalid 'url' property");
+
+      if (task.username != null && typeof task.username !== "string")
+        throw new Error("Invalid 'username' property");
+
+      if (task.password != null && typeof task.password !== "string")
+        throw new Error("Invalid 'password' property");
       break;
 
     default:

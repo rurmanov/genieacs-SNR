@@ -725,6 +725,11 @@ async function nextRpc(sessionContext: SessionContext): Promise<void> {
       ]);
       break;
     case "upload":
+      sessionContext.uploadTaskArgs = {
+        url: task.url,
+        username: task.username,
+        password: task.password,
+      };
       session.addProvisions(sessionContext, taskChannel, [
         ["upload", task.fileType ?? "", task.fileName ?? ""],
       ]);
@@ -862,20 +867,30 @@ async function sendAcsRequest(
   }
 
   if (acsRequest.name === "Upload") {
-    let prefix = "" + config.get("FS_URL_PREFIX");
+    if (sessionContext.uploadTaskArgs?.url) {
+      acsRequest.url = sessionContext.uploadTaskArgs.url;
+    } else {
+      let prefix = "" + config.get("FS_URL_PREFIX");
 
-    if (!prefix) {
-      const FS_PORT = Number(config.get("FS_PORT"));
-      const ssl = !!config.get("FS_SSL_CERT");
-      const origin = getRequestOrigin(sessionContext.httpRequest);
-      let hostname = origin.localAddress;
-      if (origin.host) [hostname] = origin.host.split(":", 1);
-      prefix = (ssl ? "https" : "http") + `://${hostname}:${FS_PORT}/`;
+      if (!prefix) {
+        const FS_PORT = Number(config.get("FS_PORT"));
+        const ssl = !!config.get("FS_SSL_CERT");
+        const origin = getRequestOrigin(sessionContext.httpRequest);
+        let hostname = origin.localAddress;
+        if (origin.host) [hostname] = origin.host.split(":", 1);
+        prefix = (ssl ? "https" : "http") + `://${hostname}:${FS_PORT}/`;
+      }
+
+      acsRequest.url =
+        prefix +
+        (acsRequest.fileName ?? "").split("/").map(encodeURIComponent).join("/");
     }
 
-    acsRequest.url =
-      prefix +
-      (acsRequest.fileName ?? "").split("/").map(encodeURIComponent).join("/");
+    if (sessionContext.uploadTaskArgs?.username)
+      acsRequest.username = sessionContext.uploadTaskArgs.username;
+
+    if (sessionContext.uploadTaskArgs?.password)
+      acsRequest.password = sessionContext.uploadTaskArgs.password;
   }
 
   const rpc = {

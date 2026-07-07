@@ -68,6 +68,9 @@ interface TaskUpload extends TaskBase {
   name: "upload";
   fileType: string;
   fileName: string;
+  url?: string;
+  username?: string;
+  password?: string;
 }
 
 interface TaskAddObject extends TaskBase {
