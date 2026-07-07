@@ -289,7 +289,14 @@ async function handler(
         }
 
         if (task) {
-          await apiFunctions.insertTasks(task);
+          try {
+            await apiFunctions.insertTasks(task);
+          } catch (err) {
+            if (!(err instanceof Error)) throw err;
+            response.writeHead(400);
+            response.end(`${err.name}: ${err.message}`);
+            return;
+          }
           response.writeHead(202, { "Content-Type": "application/json" });
           response.end(JSON.stringify(task));
         } else {
@@ -324,7 +331,14 @@ async function handler(
           return;
         }
 
-        await apiFunctions.insertTasks(task);
+        try {
+          await apiFunctions.insertTasks(task);
+        } catch (err) {
+          if (!(err instanceof Error)) throw err;
+          response.writeHead(400);
+          response.end(`${err.name}: ${err.message}`);
+          return;
+        }
         response.writeHead(202, "Task queued but not processed", {
           "Content-Type": "application/json",
         });
@@ -341,7 +355,14 @@ async function handler(
           response.end("No such device");
           return;
         }
-        await apiFunctions.insertTasks(task);
+        try {
+          await apiFunctions.insertTasks(task);
+        } catch (err) {
+          if (!(err instanceof Error)) throw err;
+          response.writeHead(400);
+          response.end(`${err.name}: ${err.message}`);
+          return;
+        }
       } finally {
         await releaseLock(`cwmp_session_${deviceId}`, token);
       }

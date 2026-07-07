@@ -659,6 +659,9 @@ export async function getDueTasks(
       ...(t.name === "upload" && {
         fileType: t.fileType,
         fileName: t.fileName,
+        url: t.url,
+        username: t.username,
+        password: t.password,
       }),
     };
 
