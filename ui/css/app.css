@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./custom.css";
 @plugin "@tailwindcss/forms";
 
 @source inline("h-full bg-stone-100");
