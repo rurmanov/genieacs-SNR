@@ -1,0 +1,388 @@
+/*
+ * GenieACS Custom Theme - SNR Corporate Design
+ * 
+ * Этот файл содержит кастомные стили для бренда SNR.
+ * При обновлении GenieACS (upstream pull) необходимо сохранить этот файл
+ * и восстановить строку @import "./custom.css"; в app.css
+ */
+
+:root {
+  /* Цветовая палитра - Сайдбар */
+  --snr-sidebar-bg: #130B1F;
+  --snr-sidebar-text: #FFFFFF;
+  --snr-sidebar-active-bg: #6B28B8;
+  --snr-sidebar-hover-bg: #443654;
+
+  /* Цветовая палитра - Основной лейаут */
+  --snr-main-bg: #EBECEF;
+  --snr-card-bg: #FFFFFF;
+  
+  /* Акценты и Кнопки */
+  --snr-primary-color: #6B28B8;
+  --snr-primary-hover: #5a22a0;
+  --snr-danger-color: #FF4D4F;
+  --snr-success-color: #52C41A;
+
+  /* Модальные окна */
+  --snr-modal-backdrop: rgba(0, 0, 0, 0.4);
+  --snr-modal-bg: #FFFFFF;
+
+  /* Формы и отступы */
+  --snr-border-radius: 8px;
+  --snr-padding-v: 12px;
+}
+
+/* ========================================
+   SIDEBAR - Desktop
+   ======================================== */
+
+/* Desktop sidebar container */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 {
+  background-color: var(--snr-sidebar-bg);
+}
+
+/* Desktop sidebar inner container */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+> .flex-1.flex.flex-col.min-h-0.border-r.border-stone-200.bg-white {
+  background-color: var(--snr-sidebar-bg);
+  border-right-color: var(--snr-sidebar-hover-bg);
+}
+
+/* Sidebar navigation area */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+nav.bg-white {
+  background-color: var(--snr-sidebar-bg);
+}
+
+/* Sidebar nav links - inactive state */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+nav a.text-stone-600 {
+  color: var(--snr-sidebar-text);
+  opacity: 0.8;
+}
+
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+nav a.text-stone-600:hover {
+  background-color: var(--snr-sidebar-hover-bg);
+  color: var(--snr-sidebar-text);
+  opacity: 1;
+}
+
+/* Sidebar nav links - active state */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+nav a.bg-stone-100 {
+  background-color: var(--snr-sidebar-active-bg);
+  color: var(--snr-sidebar-text);
+  opacity: 1;
+}
+
+/* Sidebar user section */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+.text-stone-600 {
+  color: var(--snr-sidebar-text);
+  opacity: 0.8;
+}
+
+/* Sidebar logout button */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+button.text-cyan-700,
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+a.text-cyan-700 {
+  color: var(--snr-sidebar-text);
+}
+
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+button.text-cyan-700:hover,
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+a.text-cyan-700:hover {
+  color: var(--snr-sidebar-text);
+  opacity: 0.8;
+}
+
+/* Sidebar version text */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+.text-stone-400 {
+  color: var(--snr-sidebar-text);
+  opacity: 0.5;
+}
+
+/* ========================================
+   SIDEBAR - Mobile
+   ======================================== */
+
+/* Mobile sidebar */
+.mobile-sidebar {
+  background-color: var(--snr-sidebar-bg) !important;
+}
+
+/* Mobile sidebar nav links - inactive */
+.mobile-sidebar nav a.text-stone-600 {
+  color: var(--snr-sidebar-text);
+  opacity: 0.8;
+}
+
+.mobile-sidebar nav a.text-stone-600:hover {
+  background-color: var(--snr-sidebar-hover-bg);
+  color: var(--snr-sidebar-text);
+  opacity: 1;
+}
+
+/* Mobile sidebar nav links - active */
+.mobile-sidebar nav a.bg-stone-100 {
+  background-color: var(--snr-sidebar-active-bg);
+  color: var(--snr-sidebar-text);
+  opacity: 1;
+}
+
+/* Mobile sidebar user section */
+.mobile-sidebar .text-stone-600 {
+  color: var(--snr-sidebar-text);
+  opacity: 0.8;
+}
+
+/* Mobile sidebar logout/login links */
+.mobile-sidebar button.text-cyan-700,
+.mobile-sidebar a.text-cyan-700 {
+  color: var(--snr-sidebar-text);
+}
+
+/* Mobile sidebar version text */
+.mobile-sidebar .text-stone-400 {
+  color: var(--snr-sidebar-text);
+  opacity: 0.5;
+}
+
+/* ========================================
+   MAIN CONTENT AREA
+   ======================================== */
+
+/* Body background */
+body.h-full.bg-stone-100 {
+  background-color: var(--snr-main-bg);
+}
+
+/* Mobile menu button area */
+.sticky.top-0.z-10.md\:hidden.bg-stone-100 {
+  background-color: var(--snr-main-bg);
+}
+
+/* ========================================
+   BUTTONS AND LINKS - Primary Color Override
+   ======================================== */
+
+/* Primary buttons (cyan -> purple) */
+button.bg-cyan-600,
+.bg-cyan-600 {
+  background-color: var(--snr-primary-color);
+}
+
+button.bg-cyan-600:hover,
+.bg-cyan-600:hover {
+  background-color: var(--snr-primary-hover);
+}
+
+button.bg-cyan-500,
+.bg-cyan-500 {
+  background-color: var(--snr-primary-color);
+}
+
+button.bg-cyan-500:hover,
+.bg-cyan-500:hover {
+  background-color: var(--snr-primary-hover);
+}
+
+/* Text links (cyan -> purple) */
+a.text-cyan-600,
+.text-cyan-600 {
+  color: var(--snr-primary-color);
+}
+
+a.text-cyan-600:hover,
+.text-cyan-600:hover {
+  color: var(--snr-primary-hover);
+}
+
+a.text-cyan-700,
+.text-cyan-700 {
+  color: var(--snr-primary-color);
+}
+
+a.text-cyan-700:hover,
+.text-cyan-700:hover {
+  color: var(--snr-primary-hover);
+}
+
+a.text-cyan-500,
+.text-cyan-500 {
+  color: var(--snr-primary-color);
+}
+
+/* Focus ring (cyan -> purple) */
+.focus\:ring-cyan-500:focus {
+  --tw-ring-color: var(--snr-primary-color);
+}
+
+.focus\:outline-cyan-500:focus {
+  outline-color: var(--snr-primary-color);
+}
+
+/* Border colors (cyan -> purple) */
+.border-cyan-500 {
+  border-color: var(--snr-primary-color);
+}
+
+/* ========================================
+   DANGER BUTTONS
+   ======================================== */
+
+button.bg-red-600,
+.bg-red-600 {
+  background-color: var(--snr-danger-color);
+}
+
+button.bg-red-600:hover,
+.bg-red-600:hover {
+  background-color: #e63946;
+}
+
+.text-red-600 {
+  color: var(--snr-danger-color);
+}
+
+/* ========================================
+   SUCCESS STATES
+   ======================================== */
+
+button.bg-emerald-600,
+.bg-emerald-600 {
+  background-color: var(--snr-success-color);
+}
+
+.text-emerald-600 {
+  color: var(--snr-success-color);
+}
+
+/* ========================================
+   CARDS AND PANELS
+   ======================================== */
+
+/* White background panels */
+.bg-white {
+  background-color: var(--snr-card-bg);
+}
+
+/* Rounded corners for cards */
+.rounded-lg {
+  border-radius: var(--snr-border-radius);
+}
+
+.rounded-md {
+  border-radius: calc(var(--snr-border-radius) - 2px);
+}
+
+/* ========================================
+   TABLES
+   ======================================== */
+
+/* Table container */
+table {
+  background-color: var(--snr-card-bg);
+}
+
+/* Table header */
+thead th,
+thead tr {
+  background-color: #f8f9fa;
+}
+
+/* Table rows hover */
+tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* ========================================
+   MODALS AND OVERLAYS
+   ======================================== */
+
+/* Modal backdrop */
+.fixed.inset-0.bg-black\/50,
+.fixed.inset-0.bg-black {
+  background-color: var(--snr-modal-backdrop);
+}
+
+/* Modal content */
+[role="dialog"] .bg-white {
+  background-color: var(--snr-modal-bg);
+  border-radius: var(--snr-border-radius);
+}
+
+/* ========================================
+   FORMS
+   ======================================== */
+
+/* Input focus states */
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--snr-primary-color);
+  --tw-ring-color: var(--snr-primary-color);
+}
+
+/* Checkbox and radio checked states */
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  accent-color: var(--snr-primary-color);
+}
+
+/* ========================================
+   LOADING SPINNER
+   ======================================== */
+
+/* Override loading spinner color in legacy components */
+@scope (.legacy-host) {
+  .loading-overlay::after {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCI+PHBhdGggZD0iTTEwIDUwYTQwIDQwIDAgMDA4MCAwIDQwIDQyIDAgMDEtODAgMCIgZmlsbD0iIzZCMjhCOCIgLz48L3N2Zz4=");
+  }
+}
+
+/* ========================================
+   NOTIFICATIONS
+   ======================================== */
+
+/* Success notification */
+.notifications .success,
+[data-type="success"] {
+  border-left-color: var(--snr-success-color);
+}
+
+/* Error notification */
+.notifications .error,
+[data-type="error"] {
+  border-left-color: var(--snr-danger-color);
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
+/* Custom scrollbar for sidebar */
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+::-webkit-scrollbar-track {
+  background: var(--snr-sidebar-bg);
+}
+
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+::-webkit-scrollbar-thumb {
+  background: var(--snr-sidebar-hover-bg);
+  border-radius: 3px;
+}
+
+.hidden.md\:flex.md\:w-64.md\:flex-col.md\:fixed.md\:inset-y-0.md\:left-0.z-20 
+::-webkit-scrollbar-thumb:hover {
+  background: var(--snr-sidebar-active-bg);
+}
