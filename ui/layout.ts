@@ -222,7 +222,7 @@ export function createLayout(
         { class: "flex-1 h-0 pt-5 pb-4 overflow-y-auto" },
         div(
           { class: "flex-shrink-0 flex items-center px-4" },
-          img({ class: "h-10 w-auto", src: `/${LOGO_SVG}`, alt: "GenieACS" }),
+          img({ class: "h-10 w-auto", src: `/${LOGO_SVG}`, alt: "GenieSNR" }),
         ),
         nav(
           { class: "mt-5 px-2 flex flex-col gap-1" },
@@ -254,7 +254,7 @@ export function createLayout(
         { class: "flex-1 flex flex-col pt-5 pb-4 overflow-y-auto" },
         div(
           { class: "flex items-center flex-shrink-0 px-4" },
-          img({ class: "h-10 w-auto", src: `/${LOGO_SVG}`, alt: "GenieACS" }),
+          img({ class: "h-10 w-auto", src: `/${LOGO_SVG}`, alt: "GenieSNR" }),
         ),
         nav(
           { class: "mt-5 flex-1 px-2 bg-white flex flex-col gap-1" },

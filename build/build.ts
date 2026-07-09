@@ -232,12 +232,12 @@ async function copyStatic(): Promise<void> {
     "LICENSE",
     "README.md",
     "CHANGELOG.md",
-    "public/logo.svg",
+    "public/GenieSNR.svg",
     "public/favicon.png",
   ];
 
   const [logo, favicon] = await Promise.all([
-    fsAsync.readFile(path.join(INPUT_DIR, "public/logo.svg")),
+    fsAsync.readFile(path.join(INPUT_DIR, "public/GenieSNR.svg")),
     fsAsync.readFile(path.join(INPUT_DIR, "public/favicon.png")),
   ]);
 
@@ -245,7 +245,7 @@ async function copyStatic(): Promise<void> {
   ASSETS.FAVICON_PNG = `favicon-${assetHash(favicon)}.png`;
 
   const filenames = {} as Record<string, string>;
-  filenames["public/logo.svg"] = path.join("public", ASSETS.LOGO_SVG);
+  filenames["public/GenieSNR.svg"] = path.join("public", ASSETS.LOGO_SVG);
   filenames["public/favicon.png"] = path.join("public", ASSETS.FAVICON_PNG);
 
   await Promise.all(
