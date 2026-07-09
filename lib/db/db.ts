@@ -1,9 +1,6 @@
 import { MongoClient, Collection, GridFSBucket } from "mongodb";
 import { get } from "../config.ts";
 import * as MongoTypes from "./types.ts";
-import GET_FILE_DIALOG from "../../seed/get-file-dialog.jsx" with { type: "text" };
-import DEVICE_PAGE_TR098 from "../../seed/device-page-tr098.jsx" with { type: "text" };
-import DEVICE_PAGE_TR181 from "../../seed/device-page-tr181.jsx" with { type: "text" };
 
 export let filesBucket: GridFSBucket;
 export let uploadsBucket: GridFSBucket;
@@ -59,31 +56,6 @@ export async function connect(): Promise<void> {
     collections.cache.createIndex({ expire: 1 }, { expireAfterSeconds: 0 }),
     collections.locks.createIndex({ expire: 1 }, { expireAfterSeconds: 0 }),
   ]);
-
-  // Migrate views: update seed views if they exist in DB
-  await migrateViews();
-}
-
-async function migrateViews(): Promise<void> {
-  const seedViews = [
-    { _id: "get-file-dialog", script: GET_FILE_DIALOG },
-    { _id: "device-page-tr098", script: DEVICE_PAGE_TR098 },
-    { _id: "device-page-tr181", script: DEVICE_PAGE_TR181 },
-  ];
-
-  for (const view of seedViews) {
-    const existing = await collections.views.findOne({ _id: view._id });
-    if (existing) {
-      // Update existing view with new script
-      await collections.views.updateOne(
-        { _id: view._id },
-        { $set: { script: view.script } },
-      );
-    } else {
-      // Insert new view
-      await collections.views.insertOne(view as MongoTypes.View);
-    }
-  }
 }
 
 export async function disconnect(): Promise<void> {
