@@ -12,6 +12,7 @@ const taskCmd = new Signal.State(null);
 const delCmd = new Signal.State(null);
 const delStatus = new Signal.State(null);
 const uploadsOpen = new Signal.State(false);
+const getFileOpen = new Signal.State(false);
 
 const delMessage = new Signal.Computed(() => {
   const s = delStatus.get();
@@ -205,6 +206,11 @@ return (
             title: "Upload a file from the device",
             action: () => uploadsOpen.set(true),
           },
+          {
+            label: "Get file",
+            title: "Get a file from the device",
+            action: () => getFileOpen.set(true),
+          },
         ].map(({ label, title, action }) => (
           <button
             onclick={action}
@@ -222,5 +228,6 @@ return (
       </h2>
       <uploads-panel device={device} />
     </overlay-dialog>
+    <get-file-dialog open={getFileOpen} device={device} />
   </>
 );

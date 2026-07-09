@@ -168,9 +168,37 @@ export async function listener(
       // A genuine DB error resurfaces below when the upload stream attempts
       // to persist the file.
     }
+
+    // Fetch device metadata to enrich upload with OUI and ProductClass
+    let metadata: { oui?: string; productClass?: string } = {};
+    try {
+      const device = (await collections.devices.findOne(
+        { _id: deviceId },
+        { projection: { "DeviceID.OUI": 1, "DeviceID.ProductClass": 1 } },
+      )) as Record<string, unknown> | null;
+      if (device) {
+        const ouiField = device["DeviceID.OUI"];
+        const productClassField = device["DeviceID.ProductClass"];
+        // Handle both flat and nested (_value) formats
+        const oui =
+          typeof ouiField === "object" && ouiField !== null
+            ? (ouiField as { _value?: string })._value
+            : ouiField;
+        const productClass =
+          typeof productClassField === "object" && productClassField !== null
+            ? (productClassField as { _value?: string })._value
+            : productClassField;
+        if (oui) metadata.oui = oui as string;
+        if (productClass) metadata.productClass = productClass as string;
+      }
+    } catch {
+      // Non-fatal: proceed without metadata if device lookup fails
+    }
+
     const uploadStream = uploadsBucket.openUploadStreamWithId(
       fileName as any,
       fileName,
+      { metadata },
     );
 
     // Content-Length can lie (or be absent with chunked encoding), so also
